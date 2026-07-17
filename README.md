@@ -75,6 +75,7 @@ The ODD constrains the conditions under which the pedestrian-detection function 
   <h3>Fog Severity Comparison</h3>
   <table>
     <tr>
+      <th>orginal picture</th>
       <th>Severity 1</th>
       <th>Severity 2</th>
       <th>Severity 3 </th>
@@ -82,7 +83,6 @@ The ODD constrains the conditions under which the pedestrian-detection function 
       <th>Severity 5</th>
     </tr>
     <tr>
-      ![Uploading Screenshot 2026-07-17 185909.png…]()
       <td><img width="203" height="345" alt="image" src="https://github.com/user-attachments/assets/fe8ca943-6374-4092-9d68-54aa4fe98c41" /></td>
       <td><img width="223" height="374" alt="fog s1" src="https://github.com/user-attachments/assets/71304911-73f9-40bc-b9f0-97caf8dc1f04" /></td>
       <td><img width="220" height="389" alt="fog s2" src="https://github.com/user-attachments/assets/71b6f5f1-a943-4b78-ad06-06938cc38b0a" /></td>
@@ -97,7 +97,7 @@ The ODD constrains the conditions under which the pedestrian-detection function 
   <h3>Snow Severity Comparison</h3>
   <table>
     <tr>
-      <th>orginal refernce</th>
+      <th>orginal picture</th>
       <th>Severity 1</th>
       <th>Severity 2</th>
       <th>Severity 3 </th>
