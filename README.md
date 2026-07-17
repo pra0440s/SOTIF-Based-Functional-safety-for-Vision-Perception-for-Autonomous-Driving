@@ -69,6 +69,62 @@ The ODD constrains the conditions under which the pedestrian-detection function 
 
 **Nominal ODD** = clear weather, daylight.
 **Adverse/edge-of-ODD conditions under test** = fog, snow, darkness — synthetically injected via `imagecorruptions` and custom gamma reduction (`fog.py`, `snow.py`, `dark.py`).
+
+
+<div align="center">
+  <h3>Fog Severity Comparison</h3>
+  <table>
+    <tr>
+      <th>Severity 1</th>
+      <th>Severity 2</th>
+      <th>Severity 3 </th>
+      <th>Severity 4 </th>
+      <th>Severity 5</th>
+    </tr>
+    <tr>
+      ![Uploading Screenshot 2026-07-17 185909.png…]()
+      <td><img width="203" height="345" alt="image" src="https://github.com/user-attachments/assets/fe8ca943-6374-4092-9d68-54aa4fe98c41" /></td>
+      <td><img width="223" height="374" alt="fog s1" src="https://github.com/user-attachments/assets/71304911-73f9-40bc-b9f0-97caf8dc1f04" /></td>
+      <td><img width="220" height="389" alt="fog s2" src="https://github.com/user-attachments/assets/71b6f5f1-a943-4b78-ad06-06938cc38b0a" /></td>
+      <td><img width="215" height="364" alt="fog s3" src="https://github.com/user-attachments/assets/77cf604b-da66-4bd4-b62b-b00a248cd829" /></td>
+      <td><img width="229" height="368" alt="fog s4" src="https://github.com/user-attachments/assets/9a7f96c8-a2f1-4859-af62-7584c072c930" /></td>
+      <td><img width="224" height="380" alt="fog s5" src="https://github.com/user-attachments/assets/6740a5a3-b662-4ca6-a63b-693aa6f38037" /></td>
+    </tr>
+  </table>
+
+  <br>
+
+  <h3>Snow Severity Comparison</h3>
+  <table>
+    <tr>
+      <th>orginal refernce</th>
+      <th>Severity 1</th>
+      <th>Severity 2</th>
+      <th>Severity 3 </th>
+      <th>Severity 4 </th>
+      <th>Severity 5</th>
+    </tr>
+    <tr>
+      <!-- REPLACE THE 'src' LINKS BELOW WITH YOUR SNOW IMAGE ASSET LINKS -->
+      <td><img width="203" height="345" alt="image" src="https://github.com/user-attachments/assets/fe8ca943-6374-4092-9d68-54aa4fe98c41" /></td>
+      <td><img width="222" height="407" alt="snow s1" src="https://github.com/user-attachments/assets/81452d1b-f839-4b7a-9089-41feb6831f8d" /></td>
+      <td><img width="218" height="380" alt="snow s2" src="https://github.com/user-attachments/assets/27c9eef7-da41-4044-9d35-a3e7bf2e36c7" /></td>
+      <td><img width="224" height="422" alt="snow s3" src="https://github.com/user-attachments/assets/05548908-ca3e-48d4-af84-6f72e91de102" /></td>
+      <td><img width="229" height="392" alt="snow s4" src="https://github.com/user-attachments/assets/a2260feb-bf0e-4520-9e05-39b3f37a6a26" /></td>
+      <td><img width="209" height="373" alt="snow s5" src="https://github.com/user-attachments/assets/9f9a2e36-c365-40f3-b5b3-636be82a7d0c" /></td>
+    </tr>
+  </table>
+</div>
+
+
+
+
+
+
+
+
+
+
  
 ### 6.3 Hazard Identification
  
