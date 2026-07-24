@@ -157,4 +157,69 @@ ISO 21448 frames the entire scope of a function's behavior space into four areas
 | **Area 3 — Unknown Unsafe** | Scenarios not yet identified/tested, where the function would fail if tested | Not covered by this project: e.g. rain, fog+darkness combined, partial occlusion by other objects, non-JAAD scenes, different camera/sensor hardware, other pedestrian poses/clothing not represented in `video_0232` |
 | **Area 4 — Unknown Safe / Irrelevant** | Scenarios not tested, but genuinely safe or outside the ODD | scenarios entirely outside the defined ODD, such as off-road or highway-only driving with no pedestrian exposure |
 
+How this project moves the needle:
+
+Before this work: fog/snow degradation on this pedestrian-detection model was unknown (Area 3 or 4, undetermined) nobody had measured it.
+After this work: it becomes known — specifically Area 2 (Known Unsafe), because the evaluation shows degraded recall under these conditions. That reclassification, from unknown to known-unsafe, is the safety-relevant contribution of a SOTIF evaluation project, even before any fix is implemented.
+
+### 3. Clause 7 — Identification and Evaluation of Functional Insufficiencies and Triggering Conditions
+### 3.1 Functional Insufficiencies
+Per ISO 21448 terminology, a functional insufficiency is either an insufficiency of specification or a performance insufficiency. For this system:
+
+- FI-01 (performance insufficiency): YOLO11l's feature extraction degrades under reduce visibility (fog), reducing objectness confidence below the detection threshold.
+- FI-02 (insufficiency of specification): The model's confidence threshold was tuned for clean and daylight conditions and is not adapted per-condition, so a single static threshold is itself a specification gap.
+
+### 3.2 Triggering Conditions
+
+A triggering condition is the specific circumstance that activates a functional insufficiency into a hazardous behavior.
+| Triggering condition | Linked FI | Description |
+|---|---|---|
+| TC-01 | FI-01 | Fog density above a level that reduces scene contrast beyond model's training distribution |
+| TC-02 | FI-02 | Snowfall particle density overshadowing pedestrian visibility |
+
+### 3.3 FTA Analysis
+```mermaid
+flowchart TD
+    TE["Top Event<br/>Missed Pedestrian Detection"]
+
+    OR1{{OR}}
+    OR2{{OR}}
+    OR3{{OR}}
+
+    TE --> OR1
+    TE --> OR2
+    TE --> OR3
+
+    OR1 --> AND1{{AND}}
+    OR1 --> AND2{{AND}}
+    OR1 --> AND3{{AND}}
+
+    AND1 --> FOG["Fog reduces image contrast"]
+    AND1 --> PED1["Pedestrian present"]
+
+    AND2 --> SNOW["Snow occludes pedestrian"]
+    AND2 --> PED2["Pedestrian present"]
+
+    AND3 --> DARK["Low illumination"]
+    AND3 --> PED3["Pedestrian present"]
+
+    OR2 --> TH["Static confidence threshold too high"]
+
+    OR3 --> GT["Ground-truth / annotation misalignment"]
+```
+## 4. Clause 8 — Functional Modification
+ 
+Per ISO 21448, once functional insufficiencies and triggering conditions are identified, **functional modifications** are proposed to reduce risk. These may be specification changes, design changes, or ODD restrictions — not just "make the model better."
+ 
+| Modification ID | Type | Description | Linked to |
+|---|---|---|---|
+| FM-01 | Design change (sensor redundancy) | Add a Radar sensor modality less affected by fog and fuse with camera output, so a fog-degraded camera detection can be backed up by another sensor | FI-01 |
+| FM-02 | Design change (algorithmic) | retrain YOLO11l on fog-augmented training data (domain adaptation) so feature extraction is more robust to low-visibility inputs | FI-01 |
+| FM-03 |	Design change (adaptive thresholding) | Replace the static confidence threshold with one conditioned on an estimated visibility/weather class (e.g. lower threshold when fog is detected, since true positives will naturally have lower confidence) | FI-02 |
+| FM-04 | ODD restriction (fallback)e | If neither FM-01 nor FM-03 is feasible, restrict the ODD to require reduced automation/driver takeover when visibility estimate drops below a defined level | FI-01 |
+
+ 
+ 
+---
+
 ## Future Work
