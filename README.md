@@ -11,10 +11,10 @@ Where the project is a research effort rather than a released product.
 | Attribute | Description |
 |---|---|
 | **Item** | Camera-based pedestrian detection function |
-| **Function** | Detect and localize pedestrians in the forward field of view of a monocular camera (JAAD dataset used monocular camera), output bounding boxes for downstream use (e.g. driver warning) |
+| **Function** | Detect and localize pedestrians in the forward field of view of a monocular camera (JAAD dataset used monocular camera), output bounding boxes for downstream use |
 | **Algorithm** | YOLO11l (You Only Look Once, v11, large variant) |
 | **Sensing modality** | Single RGB camera (monocular), as sourced from JAAD |
-| **Intended use** | Perception input to an ADAS pedestrian-protection function (e.g. forward collision warning / Automated Emergency Braking  |
+| **Intended use** | Perception input to an ADAS pedestrian-detection function (e.g. forward collision warning / Automated Emergency Braking  |
 | **Boundary of analysis** | Detection performance only — this project does not evaluate tracking, sensor fusion, or the downstream decision/actuation logic |
 
 ## 2. Clause 6 — SOTIF Engineering Cycle: ODD Definition, Hazard Identification, and Risk Evaluation
@@ -75,7 +75,7 @@ The ODD constrains the conditions under which the pedestrian-detection function 
   <h3>Fog Severity Comparison</h3>
   <table>
     <tr>
-      <th>orginal picture</th>
+      <th>orginal Video</th>
       <th>Severity 1</th>
       <th>Severity 2</th>
       <th>Severity 3 </th>
@@ -97,7 +97,7 @@ The ODD constrains the conditions under which the pedestrian-detection function 
   <h3>Snow Severity Comparison</h3>
   <table>
     <tr>
-      <th>orginal picture</th>
+      <th>orginal Video</th>
       <th>Severity 1</th>
       <th>Severity 2</th>
       <th>Severity 3 </th>
@@ -152,15 +152,23 @@ ISO 21448 frames the entire scope of a function's behavior space into four areas
 
 | Area | Definition | This project's mapping |
 |---|---|---|
-| **Area 1 — Known Safe** | Identified scenarios where the function is shown to behave safely | Clear-weather / daylight detection on `video_0232`, where YOLO11l meets acceptable recall/precision (pending measured baseline) |
+| **Area 1 — Known Safe** | Identified scenarios where the function is shown to behave safely | Clear-weather / daylight detection on `video_0232`, where YOLO11l meets acceptable recall/precision |
 | **Area 2 — Known Unsafe** | Identified scenarios where the function is shown to behave unsafely | Fog, snow, and dark conditions where recall drops and H-01/H-02 (missed/late detection) are observed — this is the direct output of the Clause 6/7/10 evaluation in this project |
 | **Area 3 — Unknown Unsafe** | Scenarios not yet identified/tested, where the function would fail if tested | Not covered by this project: e.g. rain, fog+darkness combined, partial occlusion by other objects, non-JAAD scenes, different camera/sensor hardware, other pedestrian poses/clothing not represented in `video_0232` |
 | **Area 4 — Unknown Safe / Irrelevant** | Scenarios not tested, but genuinely safe or outside the ODD | scenarios entirely outside the defined ODD, such as off-road or highway-only driving with no pedestrian exposure |
 
+
+ <img width="598" height="454" alt="sotif square" src="https://github.com/user-attachments/assets/b67ec527-5bfa-4306-b043-90995985c509" />
+
 How this project moves the needle:
 
-Before this work: fog/snow degradation on this pedestrian-detection model was unknown (Area 3 or 4, undetermined) nobody had measured it.
-After this work: it becomes known — specifically Area 2 (Known Unsafe), because the evaluation shows degraded recall under these conditions. That reclassification, from unknown to known-unsafe, is the safety-relevant contribution of a SOTIF evaluation project, even before any fix is implemented.
+- Before this work: for example lets assume fog/snow degradation on this pedestrian-detection model was unknown (Area 3 or 4, undetermined) nobody had measured it using YOLOv11l.
+
+- After this work: it becomes known Area 2 (Known Unsafe), because the evaluation shows degraded recall under these conditions. That reclassification, from unknown to known-unsafe, is the safety-relevant contribution of a SOTIF evaluation project, even before any fix is implemented.
+
+
+
+
 
 ### 3. Clause 7 — Identification and Evaluation of Functional Insufficiencies and Triggering Conditions
 ### 3.1 Functional Insufficiencies
