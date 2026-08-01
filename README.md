@@ -1,4 +1,22 @@
 # SOTIF-Based-Functional-safety-for-Vision-Perception-for-Autonomous-Driving
+
+## Abbreviation
+| Abbreviation | Full Form |
+|---|---|
+| SOTIF | Safety of the Intended Functionality |
+| ISO 21448 | International standard defining the SOTIF process |
+| ODD | Operational Design Domain |
+| FI-xx | Functional Insufficiency (e.g. FI-01)|
+| TC | Triggering Condition (e.g. TC-01) |
+| H-xx | Hazard (e.g. H-01) |
+| FM-xx | Functional Modification (e.g. FM-01) |
+| FTA | Fault Tree Analysis |
+| IoU | Intersection over Union |
+| TP / FP / FN | True Positive / False Positive / False Negative |
+| YOLO | You Only Look Once |
+| CVAT | Computer Vision Annotation Tool |
+| V&V | Verification and Validation |
+
 ## Purpose and scope of this document
 This project documentation applies the structure and terminology of **ISO 21448 — Road vehicles — Safety of the Intended Functionality (SOTIF)** to a pedestrian-detection perception function, evaluated under synthetically generated adverse weather conditions (fog, snow, low-light).
  
@@ -226,8 +244,69 @@ Per ISO 21448, once functional insufficiencies and triggering conditions are ide
 | FM-03 |	Design change (adaptive thresholding) | Replace the static confidence threshold with one conditioned on an estimated visibility/weather class (e.g. lower threshold when fog is detected, since true positives will naturally have lower confidence) | FI-02 |
 | FM-04 | ODD restriction (fallback)e | If neither FM-01 nor FM-03 is feasible, restrict the ODD to require reduced automation/driver takeover when visibility estimate drops below a defined level | FI-01 |
 
- 
- 
+## 5. Clauses 9–11 — Verification and Validation Strategy
+
+### 5.1 Clause 9 — Verification of Functional Modifications (Not Yet Executed)
+
+Once FM-01–FM-04 are implemented, each requires a dedicated verification step confirming it actually addresses its linked functional insufficiency, e.g., re-running `sotif_eval.py` after fine-tuning (FM-02) or after implementing adaptive thresholding (FM-03), and confirming recall recovery under the same fog/snow/dark conditions. This is the direct next step in the project but has not been executed in this iteration. Flagged here as planned future work, not completed evidence.
+
+### 5.2 Clause 10 — Verification: Known Scenarios (Targeted Testing)
+
+**Method:**
+- **Test scenarios:** clean / fog / snow , generated from JAAD `video_0232` via `fog.py`, `snow.py`.
+- **Test method:** IoU-based matching between YOLO11l detections and ground-truth pedestrian boxes (`sotif_eval.py`), producing per-condition precision/recall/TP/FP/FN.
+
+
+**Results (baseline system, before functional modification):**
+
+| Condition | Severity | Recall (Detection Rate) | Miss Rate | TP | FN | Avg. Confidence |
+|---|---|---|---|---|---|---|
+| Clear (baseline) | — | 99.5% | 0.5% | 208 | 1 | 0.640 |
+| Fog | S1 | 53.6% | 46.4% | 112 | 97 | 0.776 |
+| Fog | S2 | 32.1% | 67.9% | 67 | 142 | 0.775 |
+| Fog | S3 | 7.2% | 92.8% | 15 | 194 | 0.808 |
+| Fog | S4 | 5.7% | 94.3% | 12 | 197 | 0.760 |
+| Fog | S5 | 1.9% | 98.1% | 4 | 205 | 0.764 |
+
+
+| Condition | Severity | Recall (Detection Rate) | Miss Rate | TP | FN | Avg. Confidence |
+|---|---|---|---|---|---|---|
+| Clear (baseline) | — | 99.5% | 0.5% | 208 | 1 | 0.640 |
+| Snow | S1 | 89.0% | 11.0% | 186 | 23 | 0.758 |
+| Snow | S2 | 79.4% | 20.6% | 166 | 43 | 0.697 |
+| Snow | S3 | 77.0% | 23.0% | 161 | 48 | 0.701 |
+| Snow | S4 | 60.3% | 39.7% | 126 | 83 | 0.714 |
+| Snow | S5 | 58.9% | 41.1% | 123 | 86 | 0.716 |
+
+**Key observations:**
+- **Fog exhibits nonlinear degradation** — recall collapses sharply between S2 and S3 (32.1% → 7.2%), indicating a threshold like failure rather than gradual decline. Beyond S3, the detector is functionally blind (≤7% recall).
+- **Snow degrades approximately linearly** with severity, remaining partially functional even at S5 (58.9% recall) — a materially different failure signature from fog.
+
+
+These results are the direct evidence behind FI-01/FI-02 and the SOTIF Area 2 classification — they establish that fog/snow degradation is *known and measured*, not hypothesized. No functional modification has been applied yet; these numbers are the "before" state that (Clause 9) will re-test against once FM-01–FM-04 are implemented. Full per-frame breakdown and plots: `docs/results.md`.
+
+### 5.3 Clause 11 — Validation: Unknown Scenarios / Residual Risk (Statistical)
+
+
+
+- Single source video (`video_0232`) limits scenario diversity — pedestrian poses, ranges, occlusion types are not exhaustively sampled.
+- Synthetic weather corruption (`imagecorruptions`) approximates but does not equal real sensor-level degradation (e.g. real fog affects lens flare, droplet-on-lens effects, which are not modeled).
+- A production grade validation would require statistical sampling across many real-world drive scenario databases, plus field data collection (Clause 13, operation phase) which is explicitly out of scope here.
+
+Stating this limitation clearly is itself good SOTIF practice — the standard is built around arguing residual risk honestly.
+
 ---
 
-## Future Work
+### Future Work
+
+The current evaluation relies solely on synthetic weather corruption, which is a useful first-pass screening method but not a substitute for statistical validation. Extending this work toward a genuine SOTIF validation argument would require progressing through increasingly higher-fidelity methods:
+
+- **Physics-based simulation** — modeling real optical effects (lens flare, droplet-on-lens scattering, backscatter from headlights) rather than pixel-level corruption alone.
+- **Controlled real-world track testing** — actual adverse weather (or fog-machine equivalent), real camera, real vehicle, in a repeatable closed environment.
+- **Field data collection (Clause 13)** — real-world fleet driving data, providing statistical confidence across the deployed vehicle population.
+
+This project establishes that a real degradation pattern exists under fog and snow (Clause 10) — the natural next step is validating the *magnitude* of that risk through the stages above, rather than relying on synthetic corruption alone.
+
+Additional future work items also carry over from earlier sections:
+- **Clause 9 re-verification** once functional modifications (FM-01–FM-04) are implemented, then re-running the evaluation pipeline post-fix to confirm recall recovery.
+
