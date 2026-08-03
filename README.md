@@ -24,7 +24,7 @@ This is an academic project to demonstrate the **process discipline** of SOTIF e
  
 Where the project is a research effort rather than a released product.
 
-## 1. Item Definition (Clause 6)
+## 1. Item Definition (Clause 5)
 
 | Attribute | Description |
 |---|---|
