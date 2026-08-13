@@ -185,6 +185,23 @@ How this project moves the needle:
 - After this work: it becomes known Area 2 (Known Unsafe), because the evaluation shows degraded recall under these conditions. That reclassification, from unknown to known-unsafe, is the safety-relevant contribution of a SOTIF evaluation project, even before any fix is implemented.
 
 
+### 6.6 Acceptance Criteria (Defined Prior to Evaluation)
+
+Following ISO 21448 practice, acceptance criteria are defined here before verification/validation testing, using general safety reasoning principles (GAMAB, ALARP) rather than derived from any measured result. These criteria apply to fog and snow conditions within the defined ODD and are locked prior to running or re-running evaluation.
+
+**Principles Applied**
+
+| Principle | Description |
+|---|---|
+| **GAMAB** (Globally At Least As Good) | The system's pedestrian-detection performance under adverse weather should not be meaningfully worse than a reasonable reference baseline for the same task. |
+| **ALARP** (As Low As Reasonably Practicable) | Where the system falls short of the reference, risk should be reduced as far as reasonably practicable through functional modification or ODD restriction, rather than accepted as-is. |
+
+| Hazard | Acceptance Criterion |
+|---|---|
+| H-01 (missed detection) | Recall ≥ 50% of clean-weather baseline under fog/snow |
+| H-02 (late detection) | *Not yet defined - requires time-to-detection measurement (first correct detection relative to pedestrian's first appearance in ground truth), not implemented in the current pipeline. See Future Work.* |
+| H-03 (flicker) | *Not yet defined - requires detection-persistence measurement across consecutive frames per tracked pedestrian, not implemented in the current pipeline. See Future Work.* |
+
 
 
 
@@ -297,16 +314,24 @@ Stating this limitation clearly is itself good SOTIF practice — the standard i
 
 ---
 
+
 ### Future Work
 
-The current evaluation relies solely on synthetic weather corruption, which is a useful first-pass screening method but not a substitute for statistical validation. Extending this work toward a genuine SOTIF validation argument would require progressing through increasingly higher-fidelity methods:
+**1. Move beyond synthetic weather effects to real testing.**
+This project used software to fake fog and snow on video frames. That's a good first step to show there's a real problem, but it's not the same as testing in real weather. The next steps, in order of getting closer to real-world proof:
+- **Simulation with real physics** — model how fog and snow actually affect a camera lens (blur, light scatter, glare), not just add a filter to the image.
+- **Real-world testing on a track** — use an actual vehicle and camera in real or machine-made fog/snow, in a safe, controlled setting.
+- **Real driving data (Clause 13)** — collect data from real cars driving in real conditions over time, to build confidence with real numbers.
 
-- **Physics-based simulation** — modeling real optical effects (lens flare, droplet-on-lens scattering, backscatter from headlights) rather than pixel-level corruption alone.
-- **Controlled real-world track testing** — actual adverse weather (or fog-machine equivalent), real camera, real vehicle, in a repeatable closed environment.
-- **Field data collection (Clause 13)** — real-world fleet driving data, providing statistical confidence across the deployed vehicle population.
+This project shows fog and snow genuinely hurt detection (Clause 10) — the next step is finding out exactly how much that matters in the real world, not just proving it happens at all.
 
-This project establishes that a real degradation pattern exists under fog and snow (Clause 10) — the natural next step is validating the *magnitude* of that risk through the stages above, rather than relying on synthetic corruption alone.
+**2. Track each pedestrian across frames, so late and flickering detections can be measured.**
+Right now, the evaluation checks each frame on its own - it doesn't follow one specific pedestrian over time. To check for late detection (H-02) or flickering detection (H-03), the pipeline needs to follow the same pedestrian across multiple frames and measure:
+- **How many frames it takes to first detect them**, for late detection.
+- **Whether detection drops in and out while they're still there**, for flickering.
 
-Additional future work items also carry over from earlier sections:
-- **Clause 9 re-verification** once functional modifications (FM-01–FM-04) are implemented, then re-running the evaluation pipeline post-fix to confirm recall recovery.
+This isn't built yet, so the acceptance criteria for H-02 and H-03 can't be filled in until this is added.
+
+**3. Re-test after applying the proposed fixes (Clause 9).**
+Once the proposed fixes (FM-01–FM-04) are actually built — like retraining the model or adding LiDAR — the same fog/snow tests should be run again to check whether detection actually improves. This step comes last because it depends on the fixes existing first.
 
